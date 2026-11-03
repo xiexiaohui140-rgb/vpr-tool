@@ -68,6 +68,7 @@ footer{font-size:12px;color:#4a5568;text-align:center;padding:10px 16px 30px;lin
 <div class="row"><label>处方UF</label><input id="ufRx" type="number" inputmode="numeric"><span class="u">mL/h</span></div>
 <div class="row"><label>24h停机</label><input id="downtime" type="number" inputmode="decimal"><span class="u">h</span></div>
 <div class="row"><label>UF耐受</label><div class="seg" data-k="tolerance"><button data-v="耐受" class="on">耐受</button><button data-v="疑似不耐受">疑似</button><button data-v="明确不耐受">明确</button></div></div>
+<div class="row" id="adjRow" style="display:none"><label>已调整为</label><input id="ufAdjusted" type="number" inputmode="numeric" placeholder="可选"><span class="u">mL/h</span></div>
 <details><summary>不耐受辅助清单（勾选自动建议）<span class="pend">待审定</span></summary>
 <p class="hint">启动或上调 UF 后约 1 h 内评估。</p><b>疑似不耐受（任一）</b><div id="ls"></div><b>明确不耐受（任一）</b><div id="lc"></div>
 <div class="calc" id="tolSug"></div></details>
@@ -93,7 +94,7 @@ footer{font-size:12px;color:#4a5568;text-align:center;padding:10px 16px 30px;lin
  * ===================================================================== */
 (function (root) {
   const RULES = {
-    version: 'v1.0',
+    version: 'v1.1',
     date: '2026-11-03',
 
     // ---- 阈值（文档原值）----
@@ -203,6 +204,13 @@ footer{font-size:12px;color:#4a5568;text-align:center;padding:10px 16px 30px;lin
 
     // 不耐受覆盖（不论分区）
     if (tol !== '耐受') out.intolAction = '立即下调或暂停净超滤 → 复评灌注并记录 → 报告医生';
+    // v1.1：不耐受覆盖黄/绿区的净超滤建议（红区本已 0 mL/h，不覆盖）
+    if (tol !== '耐受' && out.zone && out.zone !== 'red') {
+      const act = tol === '明确不耐受' ? '暂停或显著下调' : '下调';
+      out.ufOverride = true;
+      out.uf = { override: true, text: '立即下调或暂停净超滤', detail: `${tol}：${act}净超滤；不执行本区上调/维持方案`, kg: act, mlh: act };
+      out.recheck = '下调/暂停后立即复评灌注';
+    }
 
     // 5) 落实率
     if (Number(d.ufRx) > 0 && d.ufActual !== '' && d.ufActual != null) {
@@ -236,8 +244,12 @@ footer{font-size:12px;color:#4a5568;text-align:center;padding:10px 16px 30px;lin
     const v = (x, u = '') => (x === '' || x == null || (typeof x === 'number' && isNaN(x))) ? '×' + u : x + u;
     const ne = { stable: '稳定', up: '进行性增加' }[d.ne] || '×';
     const fb = d.fb === '' || d.fb == null ? '×' : (Number(d.fb) > 0 ? '+' : '') + d.fb;
-    const ufNow = o.zone === 'red' ? '已将净超滤暂停（0 mL/h）' : `当前实际净超滤 ${v(d.ufActual)} mL/h`;
-    const rec = o.zone === 'red' ? '建议评估是否调整血管活性药物方案，待灌注恢复后评估是否低速恢复净超滤'
+    const act = o.tolerance === '明确不耐受' ? '暂停或显著下调' : '下调';
+    const ufNow = o.zone === 'red' ? '已将净超滤暂停（0 mL/h）'
+      : o.ufOverride ? `当前实际净超滤 ${v(d.ufActual)} mL/h，` + ((d.ufAdjusted !== '' && d.ufAdjusted != null) ? `已调整为 ${d.ufAdjusted} mL/h` : `已提示${act}`)
+      : `当前实际净超滤 ${v(d.ufActual)} mL/h`;
+    const rec = o.ufOverride ? '建议重新评估净超滤目标及血管活性药物方案'
+      : o.zone === 'red' ? '建议评估是否调整血管活性药物方案，待灌注恢复后评估是否低速恢复净超滤'
       : o.zone === 'yellow' ? `建议在医嘱范围内按 ${o.uf.kg} mL/kg/h（约 ${o.uf.mlh} mL/h）起步上调，评估是否上调 24 h 净脱水目标`
       : '建议维持当前处方';
     return [
@@ -260,13 +272,13 @@ const $=id=>document.getElementById(id);
 const S={wtype:'入院体重',ne:'stable',lacTrend:'down',fbTrend:'flat',tolerance:'耐受'};
 const defaults={...S};
 document.querySelectorAll('.seg').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;setSeg(g.dataset.k,b.dataset.v);}));
-function setSeg(k,v){S[k]=v;document.querySelectorAll(`.seg[data-k="${k}"] button`).forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
+function setSeg(k,v){S[k]=v;if(k==='tolerance'){const r=document.getElementById('adjRow');if(r)r.style.display=v==='耐受'?'none':'flex';}document.querySelectorAll(`.seg[data-k="${k}"] button`).forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
 const mk=(arr,el)=>{$(el).innerHTML=arr.map(([k,t])=>`<label class="chk"><input type="checkbox" data-i="${k}">${t}</label>`).join('');};
 mk(RULES.INTOL_SUSPECT,'ls');mk(RULES.INTOL_CLEAR,'lc');
 document.querySelectorAll('[data-i]').forEach(c=>c.addEventListener('change',()=>{const ch={};document.querySelectorAll('[data-i]').forEach(x=>ch[x.dataset.i]=x.checked);const s=suggestTolerance(ch);$('tolSug').textContent='建议：'+s;setSeg('tolerance',s);}));
 const bed=new URLSearchParams(location.search).get('bed');if(bed)$('bed').value=bed;
 const num=id=>{const v=$(id).value.trim();return v===''?'':Number(v);};
-function read(){return{bed:$('bed').value.trim(),weight:num('weight'),wtype:S.wtype,map:num('map'),crt:num('crt'),crtWorse:$('crtWorse').checked,ne:S.ne,lac:num('lac'),lac2h:num('lac2h'),lacTrend:S.lacTrend,fo:num('fo'),intake:num('intake'),output:num('output'),fb:num('fb'),fbTrend:S.fbTrend,ufActual:num('ufActual'),ufRx:num('ufRx'),downtime:num('downtime'),tolerance:S.tolerance,nurseConcern:$('nurseConcern').checked};}
+function read(){return{bed:$('bed').value.trim(),weight:num('weight'),wtype:S.wtype,map:num('map'),crt:num('crt'),crtWorse:$('crtWorse').checked,ne:S.ne,lac:num('lac'),lac2h:num('lac2h'),lacTrend:S.lacTrend,fo:num('fo'),intake:num('intake'),output:num('output'),fb:num('fb'),fbTrend:S.fbTrend,ufActual:num('ufActual'),ufRx:num('ufRx'),ufAdjusted:num('ufAdjusted'),downtime:num('downtime'),tolerance:S.tolerance,nurseConcern:$('nurseConcern').checked};}
 function live(){const d=read();const f=(d.intake!==''&&d.output!=='')?computeFO(d.intake,d.output,d.weight):null;$('foCalc').textContent=f!=null?`自动计算 FO = ${f}%${d.fo===''?'（将采用）':'（已直接填写，以填写值为准）'}`:'';
  $('lacCalc').textContent=(d.lac!==''&&d.lac2h>0)?`2 h 降幅 ${Math.round((d.lac2h-d.lac)/d.lac2h*1000)/10}%`:'';}
 document.querySelectorAll('input').forEach(i=>i.addEventListener('input',live));
@@ -276,8 +288,9 @@ $('go').onclick=()=>{const d=read();
  const o=evaluate(d);last={d,o};
  const z=$('zone');z.className='zone '+(o.zone||'none');
  const sub={red:'灌注不达标',yellow:o.middleBand?'灌注达标 · FO 5%～<10%（中间带）':'灌注达标 · 液体超负荷',green:'灌注达标 · 容量稳定'};
- $('zt').textContent=o.zone?ZONE_CN[o.zone]:'无法分区';$('zs').textContent=o.zone?sub[o.zone]:'请填写 FO% 或累计入出量';
+ $('zt').textContent=o.zone?ZONE_CN[o.zone]+(o.ufOverride?' · PROTECT 覆盖':''):'无法分区';$('zs').textContent=o.zone?sub[o.zone]:'请填写 FO% 或累计入出量';
  if(o.zone==='red'){$('ufbig').textContent='净超滤 0 mL/h';$('ufsub').textContent='先暂停脱水；保留置换液、透析液处方';}
+ else if(o.ufOverride){$('ufbig').textContent='立即下调或暂停净超滤';$('ufsub').innerHTML=`<b>PROTECT 覆盖本区方案</b><br>${o.uf.detail}；复评灌注后报告医生`;}
  else if(o.zone==='yellow'){$('ufbig').innerHTML=`起步 ${o.uf.kg} mL/kg/h<br>≈ ${o.uf.mlh} mL/h`;$('ufsub').innerHTML=`护士上限 ${o.uf.capKg} mL/kg/h ≈ ${o.uf.capMlh} mL/h（${d.weight} kg，${d.wtype}）<br>每次上调 ${RULES.UF_STEP}，目标 24 h 负平衡；超上限须医生评估`;}
  else if(o.zone==='green'){$('ufbig').textContent='净超滤维持不变';$('ufsub').textContent='不加不减；病情变化时重新分区';}
  else{$('ufbig').textContent='';$('ufsub').textContent='';}
@@ -291,7 +304,7 @@ $('go').onclick=()=>{const d=read();
  if(o.zone==='red'){a.push('排查可逆因素：管路受压/打折、滤器凝血报警、输液及血管活性药物通路、镇静镇痛');a.push('恢复条件：MAP ≥65 并稳定、CRT ≤3 s、乳酸呈下降趋势后，由医生评估是否低速恢复净超滤');}
  if(o.intolAction)a.push(`<b>${o.tolerance}：</b>${o.intolAction}`);
  if(o.fulfil!=null)a.push(`处方落实率 ${o.fulfil}%：${o.fulfilMsg}`);
- if(o.zone==='yellow')a.push('先核查处方执行（实际/处方净超滤、停机时长、滤器寿命），落实达标仍超负荷再上调');
+ if(o.zone==='yellow'&&!o.ufOverride)a.push('先核查处方执行（实际/处方净超滤、停机时长、滤器寿命），落实达标仍超负荷再上调');
  $('acts').innerHTML=a.map(x=>`<li>${x}</li>`).join('');
  $('sbar').style.display='none';$('cp').style.display='none';
  $('result').style.display='block';$('result').scrollIntoView({behavior:'smooth'});};

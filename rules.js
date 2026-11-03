@@ -6,7 +6,7 @@
  * ===================================================================== */
 (function (root) {
   const RULES = {
-    version: 'v1.0',
+    version: 'v1.1',
     date: '2026-11-03',
 
     // ---- 阈值（文档原值）----
@@ -116,6 +116,13 @@
 
     // 不耐受覆盖（不论分区）
     if (tol !== '耐受') out.intolAction = '立即下调或暂停净超滤 → 复评灌注并记录 → 报告医生';
+    // v1.1：不耐受覆盖黄/绿区的净超滤建议（红区本已 0 mL/h，不覆盖）
+    if (tol !== '耐受' && out.zone && out.zone !== 'red') {
+      const act = tol === '明确不耐受' ? '暂停或显著下调' : '下调';
+      out.ufOverride = true;
+      out.uf = { override: true, text: '立即下调或暂停净超滤', detail: `${tol}：${act}净超滤；不执行本区上调/维持方案`, kg: act, mlh: act };
+      out.recheck = '下调/暂停后立即复评灌注';
+    }
 
     // 5) 落实率
     if (Number(d.ufRx) > 0 && d.ufActual !== '' && d.ufActual != null) {
@@ -149,8 +156,12 @@
     const v = (x, u = '') => (x === '' || x == null || (typeof x === 'number' && isNaN(x))) ? '×' + u : x + u;
     const ne = { stable: '稳定', up: '进行性增加' }[d.ne] || '×';
     const fb = d.fb === '' || d.fb == null ? '×' : (Number(d.fb) > 0 ? '+' : '') + d.fb;
-    const ufNow = o.zone === 'red' ? '已将净超滤暂停（0 mL/h）' : `当前实际净超滤 ${v(d.ufActual)} mL/h`;
-    const rec = o.zone === 'red' ? '建议评估是否调整血管活性药物方案，待灌注恢复后评估是否低速恢复净超滤'
+    const act = o.tolerance === '明确不耐受' ? '暂停或显著下调' : '下调';
+    const ufNow = o.zone === 'red' ? '已将净超滤暂停（0 mL/h）'
+      : o.ufOverride ? `当前实际净超滤 ${v(d.ufActual)} mL/h，` + ((d.ufAdjusted !== '' && d.ufAdjusted != null) ? `已调整为 ${d.ufAdjusted} mL/h` : `已提示${act}`)
+      : `当前实际净超滤 ${v(d.ufActual)} mL/h`;
+    const rec = o.ufOverride ? '建议重新评估净超滤目标及血管活性药物方案'
+      : o.zone === 'red' ? '建议评估是否调整血管活性药物方案，待灌注恢复后评估是否低速恢复净超滤'
       : o.zone === 'yellow' ? `建议在医嘱范围内按 ${o.uf.kg} mL/kg/h（约 ${o.uf.mlh} mL/h）起步上调，评估是否上调 24 h 净脱水目标`
       : '建议维持当前处方';
     return [

@@ -25,4 +25,11 @@ t('21 清单：明确优先',V.suggestTolerance({s_hr:true,c_arr:true})==='明�
 const tbl={50:['25～50',88],60:['30～60',105],70:['35～70',123],80:['40～80',140],90:['45～90',158]};
 for(const w in tbl){o=E({...ok,weight:+w,fo:12});t(`体重表 ${w} kg → ${tbl[w][0]} / ${tbl[w][1]}`,o.uf.mlh===tbl[w][0]&&o.uf.capMlh===tbl[w][1]);}
 o=E({...ok,weight:70,fo:12,map:60,bed:'12'});const s=V.sbar({...ok,bed:'12',map:60,fb:300,ufActual:0},o);t('SBAR 含床号/红区/PROTECT',s.includes('12床')&&s.includes('红区')&&s.includes('PROTECT'));
+o=E({...ok,weight:70,fo:11,tolerance:'明确不耐受'});t('v1.1 黄区+明确 → 覆盖，无起步区间/上调',o.ufOverride&&o.zone==='yellow'&&o.uf.mlh==='暂停或显著下调'&&o.recheck.includes('下调/暂停后')&&!o.recheck.includes('上调后'));
+o=E({...ok,weight:70,fo:7,tolerance:'疑似不耐受'});t('v1.1 中间带+疑似 → 下调',o.ufOverride&&o.uf.kg==='下调'&&!o.uf.capMlh);
+o=E({...ok,weight:65,fo:3,tolerance:'疑似不耐受'});t('v1.1 绿区+疑似 → 覆盖维持方案',o.zone==='green'&&o.ufOverride&&o.protect);
+let s1=V.sbar({...ok,bed:'11',ufActual:110,fb:500},E({...ok,weight:70,fo:11,tolerance:'明确不耐受'}));t('v1.1 SBAR 不含上调，A=已提示，R=重新评估',!s1.includes('上调')&&s1.includes('已提示暂停或显著下调')&&s1.includes('建议重新评估净超滤目标及血管活性药物方案'));
+s1=V.sbar({...ok,ufActual:110,ufAdjusted:40},E({...ok,weight:70,fo:11,tolerance:'疑似不耐受'}));t('v1.1 SBAR 填已调整 → 已调整为 40',s1.includes('已调整为 40 mL/h')&&!s1.includes('已提示'));
+o=E({...ok,weight:70,fo:11,map:60,tolerance:'明确不耐受'});s1=V.sbar({...ok,map:60},o);t('v1.1 红区+不耐受 → 仍 0 mL/h，SBAR 无上调',o.zone==='red'&&o.uf.mlh==='0'&&!o.ufOverride&&!s1.includes('上调')&&o.reports.includes('超滤明确不耐受'));
+o=E({...ok,weight:70,fo:11});t('v1.1 黄区耐受 → 不覆盖，仍上调方案',!o.ufOverride&&o.uf.mlh==='35～70');
 console.log(`\n${p} passed, ${f} failed`);process.exit(f?1:0);

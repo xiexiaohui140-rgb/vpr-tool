@@ -68,6 +68,7 @@ footer{font-size:12px;color:#4a5568;text-align:center;padding:10px 16px 30px;lin
 <div class="row"><label>处方UF</label><input id="ufRx" type="number" inputmode="numeric"><span class="u">mL/h</span></div>
 <div class="row"><label>24h停机</label><input id="downtime" type="number" inputmode="decimal"><span class="u">h</span></div>
 <div class="row"><label>UF耐受</label><div class="seg" data-k="tolerance"><button data-v="耐受" class="on">耐受</button><button data-v="疑似不耐受">疑似</button><button data-v="明确不耐受">明确</button></div></div>
+<div class="row" id="adjRow" style="display:none"><label>已调整为</label><input id="ufAdjusted" type="number" inputmode="numeric" placeholder="可选"><span class="u">mL/h</span></div>
 <details><summary>不耐受辅助清单（勾选自动建议）<span class="pend">待审定</span></summary>
 <p class="hint">启动或上调 UF 后约 1 h 内评估。</p><b>疑似不耐受（任一）</b><div id="ls"></div><b>明确不耐受（任一）</b><div id="lc"></div>
 <div class="calc" id="tolSug"></div></details>
