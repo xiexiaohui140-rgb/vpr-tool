@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1f3a5f"><title>V-P-R床旁快速评估</title>
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+:root{--navy:#1f3a5f;--navy2:#2c5282;--bg:#f3f6fa;--red:#c53030;--redl:#fff0f0;--yel:#b7791f;--yell:#fffaeb;--grn:#2f855a;--grnl:#f0fff4;--line:#d5dde8}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;background:var(--bg);color:#1a202c;font-size:16px}
+header{background:var(--navy);color:#fff;padding:14px 16px 12px;position:relative}
+header h1{margin:0;font-size:19px}header p{margin:2px 0 0;font-size:13px;opacity:.85}
+main{padding:12px;max-width:560px;margin:auto}
+.card{background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card h2{font-size:16px;margin:0 0 10px;color:var(--navy);display:flex;gap:8px;align-items:center}
+.n{background:var(--navy);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.row{display:flex;gap:8px;align-items:center;margin:8px 0;flex-wrap:wrap}.row>label{min-width:84px;font-weight:600;font-size:15px}
+input[type=number],input[type=text]{flex:1;min-width:90px;padding:10px;font-size:17px;border:1px solid var(--line);border-radius:8px}
+.u{color:#4a5568;font-size:14px}
+.seg{display:flex;flex:1;border:1px solid var(--navy2);border-radius:8px;overflow:hidden}
+.seg button{flex:1;padding:9px 4px;border:0;background:#fff;color:var(--navy2);font-size:15px}
+.seg button.on{background:var(--navy2);color:#fff}
+.chk{display:flex;gap:8px;align-items:flex-start;margin:6px 0;font-size:15px}.chk input{width:20px;height:20px;margin-top:1px}
+.hint{font-size:13px;color:#4a5568;margin:4px 0}.calc{font-size:14px;color:var(--navy2);font-weight:600}
+details{margin-top:6px;font-size:14px}summary{color:var(--navy2);font-weight:600}
+.pend{display:inline-block;font-size:11px;background:#edf2f7;color:#744210;border:1px solid #d69e2e;border-radius:4px;padding:0 4px;margin-left:4px}
+.btns{display:flex;gap:10px;margin:4px 0 14px}.btns button{flex:1;padding:13px;font-size:17px;border-radius:10px;border:0;font-weight:700}
+.go{background:var(--navy);color:#fff}.rs{background:#e2e8f0;color:#2d3748}
+#result{display:none}
+.zone{border-radius:14px;padding:16px;color:#fff;margin-bottom:12px}
+.zone.red{background:var(--red)}.zone.yellow{background:#d69e2e;color:#1a202c}.zone.green{background:var(--grn)}.zone.none{background:#718096}
+.zone .zt{font-size:26px;font-weight:800}.zone .zs{font-size:15px;opacity:.95;margin-top:2px}
+.ufbig{font-size:22px;font-weight:800;margin-top:10px;line-height:1.35}.ufsub{font-size:15px;margin-top:4px}
+.badge{display:inline-block;padding:6px 12px;border-radius:20px;font-weight:800;font-size:17px;background:var(--navy);color:#fff}
+.protect{background:var(--redl);border:2px solid var(--red);color:var(--red);border-radius:10px;padding:10px;font-weight:700;margin-top:10px}
+.rep{background:var(--redl);border-left:5px solid var(--red);padding:8px 10px;border-radius:6px;margin:6px 0;font-weight:600;color:#742a2a}
+.warn{background:var(--yell);border-left:5px solid var(--yel);padding:8px 10px;border-radius:6px;margin:6px 0;color:#744210}
+ul{margin:4px 0;padding-left:20px}li{margin:3px 0}
+textarea{width:100%;min-height:300px;font-size:15px;padding:10px;border:1px solid var(--line);border-radius:8px;font-family:inherit}
+footer{font-size:12px;color:#4a5568;text-align:center;padding:10px 16px 30px;line-height:1.6}
+</style></head><body>
+<header><h1>V-P-R床旁快速评估</h1><p>22区ICU、SICU · SA-AKI + CRRT 容量管理</p></header>
+<main>
+<div class="card"><div class="row"><label>床号</label><input id="bed" type="text" placeholder="可选"></div>
+<div class="row"><label>体重</label><input id="weight" type="number" inputmode="decimal" placeholder="kg"><span class="u">kg</span></div>
+<div class="row"><label>体重口径</label><div class="seg" data-k="wtype"><button data-v="入院体重" class="on">入院体重</button><button data-v="干体重">干体重</button></div></div></div>
+
+<div class="card"><h2><span class="n">1</span>灌注 P（先评估）</h2>
+<div class="row"><label>MAP</label><input id="map" type="number" inputmode="decimal"><span class="u">mmHg</span></div>
+<div class="row"><label>CRT</label><input id="crt" type="number" inputmode="decimal"><span class="u">s</span></div>
+<label class="chk"><input type="checkbox" id="crtWorse">CRT 持续延长 / 恶化</label>
+<div class="row"><label>NE</label><div class="seg" data-k="ne"><button data-v="stable" class="on">稳定</button><button data-v="up">进行性增加</button></div></div>
+<div class="row"><label>乳酸</label><input id="lac" type="number" inputmode="decimal" placeholder="当前"><span class="u">mmol/L</span></div>
+<div class="row"><label>2 h前乳酸</label><input id="lac2h" type="number" inputmode="decimal" placeholder="可选，算降幅"><span class="u">mmol/L</span></div>
+<div class="row"><label>乳酸趋势</label><div class="seg" data-k="lacTrend"><button data-v="down" class="on">稳定/下降</button><button data-v="up">进行性升高</button></div></div>
+<div class="calc" id="lacCalc"></div></div>
+
+<div class="card"><h2><span class="n">2</span>容量 V</h2>
+<div class="row"><label>FO%</label><input id="fo" type="number" inputmode="decimal" placeholder="直接填，或下方自动算"><span class="u">%</span></div>
+<details><summary>按累计入出量自动计算 FO% <span class="pend">待审定</span></summary>
+<div class="row"><label>累计入量</label><input id="intake" type="number" inputmode="decimal"><span class="u">mL</span></div>
+<div class="row"><label>累计出量</label><input id="output" type="number" inputmode="decimal"><span class="u">mL</span></div>
+<p class="hint">FO% =（累计入量 − 累计出量）÷（体重 kg × 1000）× 100%，自入 ICU 起累计。</p></details>
+<div class="calc" id="foCalc"></div>
+<div class="row"><label>24 h FB</label><input id="fb" type="number" inputmode="numeric" placeholder="正/负"><span class="u">mL</span></div>
+<div class="row"><label>趋势</label><div class="seg" data-k="fbTrend"><button data-v="down">↓</button><button data-v="flat" class="on">→</button><button data-v="up">↑</button></div></div></div>
+
+<div class="card"><h2><span class="n">3</span>清除 R / UF</h2>
+<div class="row"><label>实际UF</label><input id="ufActual" type="number" inputmode="numeric"><span class="u">mL/h</span></div>
+<div class="row"><label>处方UF</label><input id="ufRx" type="number" inputmode="numeric"><span class="u">mL/h</span></div>
+<div class="row"><label>24h停机</label><input id="downtime" type="number" inputmode="decimal"><span class="u">h</span></div>
+<div class="row"><label>UF耐受</label><div class="seg" data-k="tolerance"><button data-v="耐受" class="on">耐受</button><button data-v="疑似不耐受">疑似</button><button data-v="明确不耐受">明确</button></div></div>
+<details><summary>不耐受辅助清单（勾选自动建议）<span class="pend">待审定</span></summary>
+<p class="hint">启动或上调 UF 后约 1 h 内评估。</p><b>疑似不耐受（任一）</b><div id="ls"></div><b>明确不耐受（任一）</b><div id="lc"></div>
+<div class="calc" id="tolSug"></div></details>
+<label class="chk" style="margin-top:10px"><input type="checkbox" id="nurseConcern">护士判断病情恶化（其他情形）</label></div>
+
+<div class="btns"><button class="go" id="go">评估</button><button class="rs" id="rs">重置</button></div>
+
+<div id="result">
+<div class="zone" id="zone"><div class="zt" id="zt"></div><div class="zs" id="zs"></div><div class="ufbig" id="ufbig"></div><div class="ufsub" id="ufsub"></div></div>
+<div class="card"><h2>KRP 分层</h2><span class="badge" id="krp"></span><div class="hint" id="krpd"></div><div class="protect" id="protect" style="display:none">⚠ PROTECT 触发：优先保护灌注，暂停强化去负荷，启动 SBAR</div></div>
+<div class="card" id="repCard"><h2>报告与预警</h2><div id="reps"></div></div>
+<div class="card"><h2>处置要点</h2><ul id="acts"></ul></div>
+<div class="card"><h2>SBAR 汇报</h2><button class="go" id="sb" style="width:100%;padding:12px;border-radius:10px;border:0;font-size:16px">生成 SBAR</button><textarea id="sbar" style="display:none;margin-top:10px"></textarea><button class="rs" id="cp" style="display:none;width:100%;margin-top:8px;padding:11px;border:0;border-radius:10px;font-size:16px">复制</button></div>
+</div>
+</main>
+<footer>适用于SA-AKI成人CRRT患者，儿童孕妇不适用；本工具为护理决策支持，处方调整以医嘱为准。<br>标注「待审定」的条目为科室建议标准，待审定。数据仅在本机计算，不上传。<br><span id="ver"></span></footer>
+<script src="rules.js"></script>
+<script src="app.js"></script>
+</body></html>

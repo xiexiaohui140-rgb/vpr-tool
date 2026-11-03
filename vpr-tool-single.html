@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1f3a5f"><title>V-P-R床旁快速评估</title>
+<link rel="icon" href="data:image/png;base64,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"><link rel="apple-touch-icon" href="data:image/png;base64,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">
+<style>
+:root{--navy:#1f3a5f;--navy2:#2c5282;--bg:#f3f6fa;--red:#c53030;--redl:#fff0f0;--yel:#b7791f;--yell:#fffaeb;--grn:#2f855a;--grnl:#f0fff4;--line:#d5dde8}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;background:var(--bg);color:#1a202c;font-size:16px}
+header{background:var(--navy);color:#fff;padding:14px 16px 12px;position:relative}
+header h1{margin:0;font-size:19px}header p{margin:2px 0 0;font-size:13px;opacity:.85}
+main{padding:12px;max-width:560px;margin:auto}
+.card{background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card h2{font-size:16px;margin:0 0 10px;color:var(--navy);display:flex;gap:8px;align-items:center}
+.n{background:var(--navy);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.row{display:flex;gap:8px;align-items:center;margin:8px 0;flex-wrap:wrap}.row>label{min-width:84px;font-weight:600;font-size:15px}
+input[type=number],input[type=text]{flex:1;min-width:90px;padding:10px;font-size:17px;border:1px solid var(--line);border-radius:8px}
+.u{color:#4a5568;font-size:14px}
+.seg{display:flex;flex:1;border:1px solid var(--navy2);border-radius:8px;overflow:hidden}
+.seg button{flex:1;padding:9px 4px;border:0;background:#fff;color:var(--navy2);font-size:15px}
+.seg button.on{background:var(--navy2);color:#fff}
+.chk{display:flex;gap:8px;align-items:flex-start;margin:6px 0;font-size:15px}.chk input{width:20px;height:20px;margin-top:1px}
+.hint{font-size:13px;color:#4a5568;margin:4px 0}.calc{font-size:14px;color:var(--navy2);font-weight:600}
+details{margin-top:6px;font-size:14px}summary{color:var(--navy2);font-weight:600}
+.pend{display:inline-block;font-size:11px;background:#edf2f7;color:#744210;border:1px solid #d69e2e;border-radius:4px;padding:0 4px;margin-left:4px}
+.btns{display:flex;gap:10px;margin:4px 0 14px}.btns button{flex:1;padding:13px;font-size:17px;border-radius:10px;border:0;font-weight:700}
+.go{background:var(--navy);color:#fff}.rs{background:#e2e8f0;color:#2d3748}
+#result{display:none}
+.zone{border-radius:14px;padding:16px;color:#fff;margin-bottom:12px}
+.zone.red{background:var(--red)}.zone.yellow{background:#d69e2e;color:#1a202c}.zone.green{background:var(--grn)}.zone.none{background:#718096}
+.zone .zt{font-size:26px;font-weight:800}.zone .zs{font-size:15px;opacity:.95;margin-top:2px}
+.ufbig{font-size:22px;font-weight:800;margin-top:10px;line-height:1.35}.ufsub{font-size:15px;margin-top:4px}
+.badge{display:inline-block;padding:6px 12px;border-radius:20px;font-weight:800;font-size:17px;background:var(--navy);color:#fff}
+.protect{background:var(--redl);border:2px solid var(--red);color:var(--red);border-radius:10px;padding:10px;font-weight:700;margin-top:10px}
+.rep{background:var(--redl);border-left:5px solid var(--red);padding:8px 10px;border-radius:6px;margin:6px 0;font-weight:600;color:#742a2a}
+.warn{background:var(--yell);border-left:5px solid var(--yel);padding:8px 10px;border-radius:6px;margin:6px 0;color:#744210}
+ul{margin:4px 0;padding-left:20px}li{margin:3px 0}
+textarea{width:100%;min-height:300px;font-size:15px;padding:10px;border:1px solid var(--line);border-radius:8px;font-family:inherit}
+footer{font-size:12px;color:#4a5568;text-align:center;padding:10px 16px 30px;line-height:1.6}
+</style></head><body>
+<header><h1>V-P-R床旁快速评估</h1><p>22区ICU、SICU · SA-AKI + CRRT 容量管理</p></header>
+<main>
+<div class="card"><div class="row"><label>床号</label><input id="bed" type="text" placeholder="可选"></div>
+<div class="row"><label>体重</label><input id="weight" type="number" inputmode="decimal" placeholder="kg"><span class="u">kg</span></div>
+<div class="row"><label>体重口径</label><div class="seg" data-k="wtype"><button data-v="入院体重" class="on">入院体重</button><button data-v="干体重">干体重</button></div></div></div>
+
+<div class="card"><h2><span class="n">1</span>灌注 P（先评估）</h2>
+<div class="row"><label>MAP</label><input id="map" type="number" inputmode="decimal"><span class="u">mmHg</span></div>
+<div class="row"><label>CRT</label><input id="crt" type="number" inputmode="decimal"><span class="u">s</span></div>
+<label class="chk"><input type="checkbox" id="crtWorse">CRT 持续延长 / 恶化</label>
+<div class="row"><label>NE</label><div class="seg" data-k="ne"><button data-v="stable" class="on">稳定</button><button data-v="up">进行性增加</button></div></div>
+<div class="row"><label>乳酸</label><input id="lac" type="number" inputmode="decimal" placeholder="当前"><span class="u">mmol/L</span></div>
+<div class="row"><label>2 h前乳酸</label><input id="lac2h" type="number" inputmode="decimal" placeholder="可选，算降幅"><span class="u">mmol/L</span></div>
+<div class="row"><label>乳酸趋势</label><div class="seg" data-k="lacTrend"><button data-v="down" class="on">稳定/下降</button><button data-v="up">进行性升高</button></div></div>
+<div class="calc" id="lacCalc"></div></div>
+
+<div class="card"><h2><span class="n">2</span>容量 V</h2>
+<div class="row"><label>FO%</label><input id="fo" type="number" inputmode="decimal" placeholder="直接填，或下方自动算"><span class="u">%</span></div>
+<details><summary>按累计入出量自动计算 FO% <span class="pend">待审定</span></summary>
+<div class="row"><label>累计入量</label><input id="intake" type="number" inputmode="decimal"><span class="u">mL</span></div>
+<div class="row"><label>累计出量</label><input id="output" type="number" inputmode="decimal"><span class="u">mL</span></div>
+<p class="hint">FO% =（累计入量 − 累计出量）÷（体重 kg × 1000）× 100%，自入 ICU 起累计。</p></details>
+<div class="calc" id="foCalc"></div>
+<div class="row"><label>24 h FB</label><input id="fb" type="number" inputmode="numeric" placeholder="正/负"><span class="u">mL</span></div>
+<div class="row"><label>趋势</label><div class="seg" data-k="fbTrend"><button data-v="down">↓</button><button data-v="flat" class="on">→</button><button data-v="up">↑</button></div></div></div>
+
+<div class="card"><h2><span class="n">3</span>清除 R / UF</h2>
+<div class="row"><label>实际UF</label><input id="ufActual" type="number" inputmode="numeric"><span class="u">mL/h</span></div>
+<div class="row"><label>处方UF</label><input id="ufRx" type="number" inputmode="numeric"><span class="u">mL/h</span></div>
+<div class="row"><label>24h停机</label><input id="downtime" type="number" inputmode="decimal"><span class="u">h</span></div>
+<div class="row"><label>UF耐受</label><div class="seg" data-k="tolerance"><button data-v="耐受" class="on">耐受</button><button data-v="疑似不耐受">疑似</button><button data-v="明确不耐受">明确</button></div></div>
+<details><summary>不耐受辅助清单（勾选自动建议）<span class="pend">待审定</span></summary>
+<p class="hint">启动或上调 UF 后约 1 h 内评估。</p><b>疑似不耐受（任一）</b><div id="ls"></div><b>明确不耐受（任一）</b><div id="lc"></div>
+<div class="calc" id="tolSug"></div></details>
+<label class="chk" style="margin-top:10px"><input type="checkbox" id="nurseConcern">护士判断病情恶化（其他情形）</label></div>
+
+<div class="btns"><button class="go" id="go">评估</button><button class="rs" id="rs">重置</button></div>
+
+<div id="result">
+<div class="zone" id="zone"><div class="zt" id="zt"></div><div class="zs" id="zs"></div><div class="ufbig" id="ufbig"></div><div class="ufsub" id="ufsub"></div></div>
+<div class="card"><h2>KRP 分层</h2><span class="badge" id="krp"></span><div class="hint" id="krpd"></div><div class="protect" id="protect" style="display:none">⚠ PROTECT 触发：优先保护灌注，暂停强化去负荷，启动 SBAR</div></div>
+<div class="card" id="repCard"><h2>报告与预警</h2><div id="reps"></div></div>
+<div class="card"><h2>处置要点</h2><ul id="acts"></ul></div>
+<div class="card"><h2>SBAR 汇报</h2><button class="go" id="sb" style="width:100%;padding:12px;border-radius:10px;border:0;font-size:16px">生成 SBAR</button><textarea id="sbar" style="display:none;margin-top:10px"></textarea><button class="rs" id="cp" style="display:none;width:100%;margin-top:8px;padding:11px;border:0;border-radius:10px;font-size:16px">复制</button></div>
+</div>
+</main>
+<footer>适用于SA-AKI成人CRRT患者，儿童孕妇不适用；本工具为护理决策支持，处方调整以医嘱为准。<br>标注「待审定」的条目为科室建议标准，待审定。数据仅在本机计算，不上传。<br><span id="ver"></span></footer>
+<script>
+/* =====================================================================
+ * V-P-R 床旁快速评估 —— 规则文件（科室可直接编辑本文件）
+ * 来源：护理质量持续改进专案/PDCA/QCC 正式版「床旁操作规范」「三区判定与处置」
+ *       「KRP 三级容量管理」「立即报告医生的情形」「关键数值一览」。
+ * 标注 PENDING 的条目 = 科室建议标准，待审定（文档未写明，由项目组补充）。
+ * ===================================================================== */
+(function (root) {
+  const RULES = {
+    version: 'v1.0',
+    date: '2026-11-03',
+
+    // ---- 阈值（文档原值）----
+    MAP_MIN: 65,            // mmHg，MAP<65 → 红区
+    CRT_MAX: 3,             // s，CRT>3 且持续延长 → 红区
+    FO_LOW: 5,              // %，FO<5 绿区条件；FO 5 为早期预警阈值
+    FO_HIGH: 10,            // %，FO≥10 黄区 / 高液体负荷
+    // 黄区净超滤（mL/kg/h）
+    UF_START_MIN: 0.5, UF_START_MAX: 1.0, UF_NURSE_MAX: 1.75,
+    UF_STEP: '20～30 mL/h',
+    // 处方落实率
+    FULFIL_TARGET: 90, FULFIL_PASS: 80,
+    // 乳酸报告线
+    LAC_REPORT: 4.0, LAC_HIGH: 2.0, LAC_DECLINE_MIN: 10,   // %
+    // 停机
+    DOWNTIME_WARN: 3, DOWNTIME_REPORT: 5,                    // h/24h
+    RECHECK: { red: '30 分钟内复测 MAP、CRT；血乳酸每 2 h 复查至下降', yellow: '上调后 1 h 复评 MAP、CRT、NE 剂量及本班累计液体平衡', green: '按时评估；病情变化时重新分区' },
+
+    // ---- PENDING：科室建议标准，待审定 ----
+    PENDING: {
+      foFormula: 'FO% =（累计入量 − 累计出量）mL ÷（体重 kg × 1000）× 100%（Goldstein 公式，自入 ICU 起累计）',
+      middleBand: 'FO 5%～<10% 不论平衡趋势均归黄区，从低端 0.5 mL/kg/h 起步',
+      krp: 'FO<5% → KEEP（若 24 h 正平衡且上升 → REMOVE）；FO 5～<10% → REMOVE；FO≥10% → REMOVE-H',
+      intolerance: '疑似/明确不耐受判定细则（见帮助清单），于启动或上调 UF 约 1 h 内评估'
+    },
+    // UF 不耐受辅助清单（PENDING）
+    INTOL_SUSPECT: [
+      ['s_map', 'MAP 较调整前下降 ≥10 mmHg，但仍 ≥65'],
+      ['s_hr', '心率升高 ≥20 次/min 或 ≥20%'],
+      ['s_crt', 'CRT 较前延长，但 ≤3 s'],
+      ['s_sym', '新发不适（烦躁、出汗、抽筋、恶心）']
+    ],
+    INTOL_CLEAR: [
+      ['c_map', 'MAP<65 或 SBP<90 mmHg，或 MAP 较前下降 ≥20%'],
+      ['c_ne', '需新加或上调 NE 才能维持血压'],
+      ['c_arr', '新发心律失常'],
+      ['c_lac', '乳酸较前升高'],
+      ['c_stop', '需暂停 UF 才能维持循环']
+    ]
+  };
+
+  const r = Math.round;
+  function ufMlh(w, k) { return r(w * k); }
+
+  // FO% 自动计算
+  function computeFO(intake, output, weight) {
+    if (!(weight > 0) || intake == null || output == null || isNaN(intake) || isNaN(output)) return null;
+    return Math.round(((intake - output) / (weight * 1000)) * 1000) / 10;
+  }
+
+  // 根据清单推荐耐受等级
+  function suggestTolerance(checks) {
+    checks = checks || {};
+    if (RULES.INTOL_CLEAR.some(([k]) => checks[k])) return '明确不耐受';
+    if (RULES.INTOL_SUSPECT.some(([k]) => checks[k])) return '疑似不耐受';
+    return '耐受';
+  }
+
+  /* 主评估：灌注优先 → 容量 → 净超滤；区优先级 红>黄>绿 */
+  function evaluate(d) {
+    const out = { redReasons: [], reports: [], warnings: [] };
+    const w = Number(d.weight);
+    let fo = d.fo != null && d.fo !== '' && !isNaN(d.fo) ? Number(d.fo) : computeFO(d.intake, d.output, w);
+    out.fo = fo;
+    const fbPosRising = Number(d.fb) > 0 && d.fbTrend === 'up';
+    out.fbPosRising = fbPosRising;
+
+    // 1) 灌注
+    if (d.map != null && d.map !== '' && Number(d.map) < RULES.MAP_MIN) out.redReasons.push('MAP<65 mmHg');
+    if (Number(d.crt) > RULES.CRT_MAX && d.crtWorse) out.redReasons.push('CRT>3 s 且持续延长');
+    if (d.lacTrend === 'up') out.redReasons.push('血乳酸进行性升高');
+    if (d.ne === 'up') out.redReasons.push('NE 剂量进行性增加');
+    const perfusionMet = out.redReasons.length === 0;
+
+    // 2) 分区
+    if (!perfusionMet) out.zone = 'red';
+    else if (fo == null) out.zone = null;
+    else if (fo >= RULES.FO_HIGH || fbPosRising) out.zone = 'yellow';
+    else if (fo >= RULES.FO_LOW) { out.zone = 'yellow'; out.middleBand = true; }
+    else out.zone = 'green';
+
+    // 3) KRP（按 FO 分层）
+    if (fo != null) {
+      if (fo >= RULES.FO_HIGH) out.krp = 'REMOVE-H';
+      else if (fo >= RULES.FO_LOW) out.krp = 'REMOVE';
+      else out.krp = fbPosRising ? 'REMOVE' : 'KEEP';
+    }
+    const tol = d.tolerance || '耐受';
+    out.tolerance = tol;
+    out.protect = !perfusionMet || tol !== '耐受';
+
+    // 4) 净超滤
+    if (out.zone === 'red') {
+      out.uf = { text: '净超滤调到 0 mL/h —— 先暂停脱水', kg: '0', mlh: '0' };
+    } else if (out.zone === 'yellow') {
+      const lo = RULES.UF_START_MIN, hi = out.middleBand ? RULES.UF_START_MIN : RULES.UF_START_MAX;
+      out.uf = {
+        kg: out.middleBand ? '0.5' : '0.5～1.0', capKg: RULES.UF_NURSE_MAX,
+        mlh: w > 0 ? (out.middleBand ? `${ufMlh(w, lo)}` : `${ufMlh(w, lo)}～${ufMlh(w, hi)}`) : null,
+        capMlh: w > 0 ? ufMlh(w, RULES.UF_NURSE_MAX) : null,
+        text: out.middleBand ? '净超滤从低端 0.5 mL/kg/h 起步' : '净超滤 0.5～1.0 mL/kg/h 起步'
+      };
+    } else if (out.zone === 'green') {
+      out.uf = { text: '净超滤维持不变 —— 不加不减', kg: '维持', mlh: '维持' };
+    }
+    if (out.zone) out.recheck = RULES.RECHECK[out.zone];
+
+    // 不耐受覆盖（不论分区）
+    if (tol !== '耐受') out.intolAction = '立即下调或暂停净超滤 → 复评灌注并记录 → 报告医生';
+
+    // 5) 落实率
+    if (Number(d.ufRx) > 0 && d.ufActual !== '' && d.ufActual != null) {
+      const f = Math.round(Number(d.ufActual) / Number(d.ufRx) * 1000) / 10;
+      out.fulfil = f;
+      out.fulfilMsg = f >= RULES.FULFIL_TARGET ? '达科室目标（≥90%）' : f >= RULES.FULFIL_PASS ? '80%～89%：优先纠正执行问题（管路冲洗、更换滤器、减少停机）' : '<80%：同步整改并报告医生';
+    }
+
+    // 6) 立即报告
+    if (out.zone === 'red') out.reports.push('红区（灌注不达标）：10 min 内报告医生');
+    if (tol === '明确不耐受') out.reports.push('超滤明确不耐受');
+    else if (tol === '疑似不耐受') out.warnings.push('疑似不耐受：下调/暂停后报告医生');
+    const lac = Number(d.lac), lac2 = Number(d.lac2h);
+    if (d.lac !== '' && d.lac != null && lac >= RULES.LAC_REPORT) out.reports.push('血乳酸 ≥4.0 mmol/L');
+    else if (lac > RULES.LAC_HIGH) {
+      if (d.lac2h !== '' && d.lac2h != null && lac2 > 0) {
+        const dec = Math.round((lac2 - lac) / lac2 * 1000) / 10;
+        out.lacDecline = dec;
+        if (dec < RULES.LAC_DECLINE_MIN) out.reports.push(`血乳酸 >2.0 且 2 h 降幅 ${dec}% <10%`);
+      } else if (d.lacTrend === 'up') out.reports.push('血乳酸 >2.0 且仍呈上升趋势');
+    }
+    const dt = Number(d.downtime);
+    if (dt >= RULES.DOWNTIME_REPORT) out.reports.push(`24 h 累计停机 ${dt} h ≥5 h，处方难以落实`);
+    else if (dt > RULES.DOWNTIME_WARN) out.warnings.push(`停机 ${dt} h >3 h：先行整改、记录原因并预警`);
+    if (d.nurseConcern) out.reports.push('护士判断病情恶化');
+    return out;
+  }
+
+  const ZONE_CN = { red: '红区', yellow: '黄区', green: '绿区' };
+  function sbar(d, o) {
+    const v = (x, u = '') => (x === '' || x == null || (typeof x === 'number' && isNaN(x))) ? '×' + u : x + u;
+    const ne = { stable: '稳定', up: '进行性增加' }[d.ne] || '×';
+    const fb = d.fb === '' || d.fb == null ? '×' : (Number(d.fb) > 0 ? '+' : '') + d.fb;
+    const ufNow = o.zone === 'red' ? '已将净超滤暂停（0 mL/h）' : `当前实际净超滤 ${v(d.ufActual)} mL/h`;
+    const rec = o.zone === 'red' ? '建议评估是否调整血管活性药物方案，待灌注恢复后评估是否低速恢复净超滤'
+      : o.zone === 'yellow' ? `建议在医嘱范围内按 ${o.uf.kg} mL/kg/h（约 ${o.uf.mlh} mL/h）起步上调，评估是否上调 24 h 净脱水目标`
+      : '建议维持当前处方';
+    return [
+      `S 现状：${v(d.bed)}床，SA-AKI 行 CRRT 治疗，本次评估为${ZONE_CN[o.zone] || '未分区'}，KRP：${o.krp || '×'}${o.protect ? '（PROTECT 触发）' : ''}；UF 耐受：${o.tolerance}。`,
+      `B 数据：FO ${v(o.fo, '%')}，24 h 液体平衡 ${fb} mL，MAP ${v(d.map)} mmHg，CRT ${v(d.crt)} s，血乳酸 ${v(d.lac)} mmol/L，NE ${ne}。`,
+      `A 已做：${ufNow}${o.fulfil != null ? `，处方落实率 ${o.fulfil}%` : ''}；${o.redReasons.length ? '红区依据：' + o.redReasons.join('、') + '。' : ''}`,
+      `R 建议：${rec}。${o.reports.length ? '需立即报告：' + o.reports.join('；') + '。' : ''}`
+    ].join('\n');
+  }
+
+  const api = { RULES, evaluate, computeFO, suggestTolerance, sbar, ufMlh, ZONE_CN };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.VPR = api;
+})(this);
+
+</script>
+<script>
+(function(){
+const {RULES,evaluate,computeFO,suggestTolerance,sbar,ZONE_CN}=window.VPR;
+const $=id=>document.getElementById(id);
+const S={wtype:'入院体重',ne:'stable',lacTrend:'down',fbTrend:'flat',tolerance:'耐受'};
+const defaults={...S};
+document.querySelectorAll('.seg').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;setSeg(g.dataset.k,b.dataset.v);}));
+function setSeg(k,v){S[k]=v;document.querySelectorAll(`.seg[data-k="${k}"] button`).forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
+const mk=(arr,el)=>{$(el).innerHTML=arr.map(([k,t])=>`<label class="chk"><input type="checkbox" data-i="${k}">${t}</label>`).join('');};
+mk(RULES.INTOL_SUSPECT,'ls');mk(RULES.INTOL_CLEAR,'lc');
+document.querySelectorAll('[data-i]').forEach(c=>c.addEventListener('change',()=>{const ch={};document.querySelectorAll('[data-i]').forEach(x=>ch[x.dataset.i]=x.checked);const s=suggestTolerance(ch);$('tolSug').textContent='建议：'+s;setSeg('tolerance',s);}));
+const bed=new URLSearchParams(location.search).get('bed');if(bed)$('bed').value=bed;
+const num=id=>{const v=$(id).value.trim();return v===''?'':Number(v);};
+function read(){return{bed:$('bed').value.trim(),weight:num('weight'),wtype:S.wtype,map:num('map'),crt:num('crt'),crtWorse:$('crtWorse').checked,ne:S.ne,lac:num('lac'),lac2h:num('lac2h'),lacTrend:S.lacTrend,fo:num('fo'),intake:num('intake'),output:num('output'),fb:num('fb'),fbTrend:S.fbTrend,ufActual:num('ufActual'),ufRx:num('ufRx'),downtime:num('downtime'),tolerance:S.tolerance,nurseConcern:$('nurseConcern').checked};}
+function live(){const d=read();const f=(d.intake!==''&&d.output!=='')?computeFO(d.intake,d.output,d.weight):null;$('foCalc').textContent=f!=null?`自动计算 FO = ${f}%${d.fo===''?'（将采用）':'（已直接填写，以填写值为准）'}`:'';
+ $('lacCalc').textContent=(d.lac!==''&&d.lac2h>0)?`2 h 降幅 ${Math.round((d.lac2h-d.lac)/d.lac2h*1000)/10}%`:'';}
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',live));
+let last=null;
+$('go').onclick=()=>{const d=read();
+ if(!(d.weight>0)){alert('请先填写体重');return;}
+ const o=evaluate(d);last={d,o};
+ const z=$('zone');z.className='zone '+(o.zone||'none');
+ const sub={red:'灌注不达标',yellow:o.middleBand?'灌注达标 · FO 5%～<10%（中间带）':'灌注达标 · 液体超负荷',green:'灌注达标 · 容量稳定'};
+ $('zt').textContent=o.zone?ZONE_CN[o.zone]:'无法分区';$('zs').textContent=o.zone?sub[o.zone]:'请填写 FO% 或累计入出量';
+ if(o.zone==='red'){$('ufbig').textContent='净超滤 0 mL/h';$('ufsub').textContent='先暂停脱水；保留置换液、透析液处方';}
+ else if(o.zone==='yellow'){$('ufbig').innerHTML=`起步 ${o.uf.kg} mL/kg/h<br>≈ ${o.uf.mlh} mL/h`;$('ufsub').innerHTML=`护士上限 ${o.uf.capKg} mL/kg/h ≈ ${o.uf.capMlh} mL/h（${d.weight} kg，${d.wtype}）<br>每次上调 ${RULES.UF_STEP}，目标 24 h 负平衡；超上限须医生评估`;}
+ else if(o.zone==='green'){$('ufbig').textContent='净超滤维持不变';$('ufsub').textContent='不加不减；病情变化时重新分区';}
+ else{$('ufbig').textContent='';$('ufsub').textContent='';}
+ $('krp').textContent=o.krp||'—';
+ $('krpd').textContent={KEEP:'低容量负荷：维持/观察',REMOVE:'中度容量负荷：主动去负荷','REMOVE-H':'高容量负荷：强化评估与协作，≠强制高速 UF'}[o.krp]||'';
+ $('protect').style.display=o.protect?'block':'none';
+ $('reps').innerHTML=(o.reports.map(r=>`<div class="rep">立即报告：${r}</div>`).join('')+o.warnings.map(r=>`<div class="warn">${r}</div>`).join(''))||'<div class="hint">暂无立即报告情形</div>';
+ const a=[];
+ if(o.redReasons.length)a.push('红区依据：'+o.redReasons.join('、'));
+ if(o.recheck)a.push('复评：'+o.recheck);
+ if(o.zone==='red'){a.push('排查可逆因素：管路受压/打折、滤器凝血报警、输液及血管活性药物通路、镇静镇痛');a.push('恢复条件：MAP ≥65 并稳定、CRT ≤3 s、乳酸呈下降趋势后，由医生评估是否低速恢复净超滤');}
+ if(o.intolAction)a.push(`<b>${o.tolerance}：</b>${o.intolAction}`);
+ if(o.fulfil!=null)a.push(`处方落实率 ${o.fulfil}%：${o.fulfilMsg}`);
+ if(o.zone==='yellow')a.push('先核查处方执行（实际/处方净超滤、停机时长、滤器寿命），落实达标仍超负荷再上调');
+ $('acts').innerHTML=a.map(x=>`<li>${x}</li>`).join('');
+ $('sbar').style.display='none';$('cp').style.display='none';
+ $('result').style.display='block';$('result').scrollIntoView({behavior:'smooth'});};
+$('sb').onclick=()=>{if(!last)return;$('sbar').value=sbar(last.d,last.o);$('sbar').style.display='block';$('cp').style.display='block';};
+$('cp').onclick=async()=>{const t=$('sbar');try{await navigator.clipboard.writeText(t.value);}catch(e){t.select();document.execCommand('copy');}$('cp').textContent='已复制';setTimeout(()=>$('cp').textContent='复制',1500);};
+$('rs').onclick=()=>{const b=$('bed').value;document.querySelectorAll('input').forEach(i=>i.type==='checkbox'?i.checked=false:i.value='');$('bed').value=bed||'';Object.entries(defaults).forEach(([k,v])=>setSeg(k,v));$('result').style.display='none';$('tolSug').textContent='';live();window.scrollTo(0,0);};
+$('ver').textContent=`版本 ${RULES.version} · ${RULES.date}`;
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js');
+})();
+
+</script>
+</body></html>

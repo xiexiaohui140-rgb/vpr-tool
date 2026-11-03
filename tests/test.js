@@ -1,0 +1,28 @@
+const V=require('../rules.js');const {evaluate:E}=V;let p=0,f=0;
+const t=(n,c)=>{if(c){p++;console.log('✓',n)}else{f++;console.log('✗',n)}};
+const ok={map:75,crt:2,ne:'stable',lacTrend:'down',lac:1.5,tolerance:'耐受'};
+let o=E({...ok,weight:60,fo:3,fb:-200,fbTrend:'down'});t('1 绿区 FO3 负平衡 → green/KEEP',o.zone==='green'&&o.krp==='KEEP'&&!o.protect);
+o=E({...ok,weight:60,fo:3,fb:500,fbTrend:'up'});t('2 FO<5 正且上升 → yellow/REMOVE',o.zone==='yellow'&&o.krp==='REMOVE'&&!o.middleBand);
+o=E({...ok,weight:60,fo:7,fb:-100,fbTrend:'flat'});t('3 中间带 FO7 → yellow 0.5 起步 30 mL/h, REMOVE',o.zone==='yellow'&&o.middleBand&&o.uf.mlh==='30'&&o.krp==='REMOVE');
+o=E({...ok,weight:70,fo:12,fb:300,fbTrend:'up'});t('4 FO12 → yellow REMOVE-H 35～70/123',o.zone==='yellow'&&o.krp==='REMOVE-H'&&o.uf.mlh==='35～70'&&o.uf.capMlh===123);
+o=E({...ok,weight:70,fo:12,map:60});t('5 MAP<65 → red 0 mL/h + PROTECT + 报告',o.zone==='red'&&o.uf.mlh==='0'&&o.protect&&o.reports.some(r=>r.includes('红区')));
+o=E({...ok,weight:70,fo:2,crt:4,crtWorse:true});t('6 CRT>3且延长 → red',o.zone==='red');
+o=E({...ok,weight:70,fo:2,crt:4,crtWorse:false});t('7 CRT>3未延长 → 非红',o.zone==='green');
+o=E({...ok,weight:70,fo:2,ne:'up'});t('8 NE进行性增加 → red',o.zone==='red'&&o.krp==='KEEP'&&o.protect);
+o=E({...ok,weight:70,fo:11,tolerance:'疑似不耐受'});t('9 疑似不耐受 → PROTECT，黄区保留，下调动作',o.zone==='yellow'&&o.protect&&o.intolAction&&!o.reports.includes('超滤明确不耐受'));
+o=E({...ok,weight:70,fo:11,tolerance:'明确不耐受'});t('10 明确不耐受 → 立即报告',o.protect&&o.reports.includes('超滤明确不耐受'));
+o=E({...ok,weight:70,fo:2,lac:4.2});t('11 乳酸≥4 → 报告',o.reports.some(r=>r.includes('≥4.0')));
+o=E({...ok,weight:70,fo:2,lac:3.0,lac2h:3.2});t('12 乳酸>2 且2h降幅6.3%<10% → 报告',o.lacDecline===6.3&&o.reports.some(r=>r.includes('降幅')));
+o=E({...ok,weight:70,fo:2,lac:2.5,lac2h:3.0});t('13 降幅16.7% → 不报告',!o.reports.length);
+o=E({...ok,weight:70,fo:2,downtime:4});t('14 停机4h → 预警',o.warnings.some(w=>w.includes('>3 h'))&&!o.reports.length);
+o=E({...ok,weight:70,fo:2,downtime:5});t('15 停机5h → 报告',o.reports.some(r=>r.includes('停机')));
+o=E({...ok,weight:70,fo:2,ufActual:85,ufRx:100});t('16 落实率85% → 纠正执行',o.fulfil===85&&o.fulfilMsg.startsWith('80%'));
+o=E({...ok,weight:70,fo:2,ufActual:70,ufRx:100});t('17 落实率70% → 整改报告',o.fulfilMsg.startsWith('<80%'));
+o=E({...ok,weight:70,fo:2,ufActual:95,ufRx:100});t('18 落实率95% → 达标',o.fulfilMsg.startsWith('达科室'));
+t('19 FO 公式 (8000−1000)/(70×1000)=10%',V.computeFO(8000,1000,70)===10);
+o=E({...ok,weight:70,fo:'',intake:8000,output:1000});t('20 自动FO10 → REMOVE-H 黄区',o.fo===10&&o.krp==='REMOVE-H'&&o.zone==='yellow');
+t('21 清单：明确优先',V.suggestTolerance({s_hr:true,c_arr:true})==='明确不耐受'&&V.suggestTolerance({s_sym:true})==='疑似不耐受'&&V.suggestTolerance({})==='耐受');
+const tbl={50:['25～50',88],60:['30～60',105],70:['35～70',123],80:['40～80',140],90:['45～90',158]};
+for(const w in tbl){o=E({...ok,weight:+w,fo:12});t(`体重表 ${w} kg → ${tbl[w][0]} / ${tbl[w][1]}`,o.uf.mlh===tbl[w][0]&&o.uf.capMlh===tbl[w][1]);}
+o=E({...ok,weight:70,fo:12,map:60,bed:'12'});const s=V.sbar({...ok,bed:'12',map:60,fb:300,ufActual:0},o);t('SBAR 含床号/红区/PROTECT',s.includes('12床')&&s.includes('红区')&&s.includes('PROTECT'));
+console.log(`\n${p} passed, ${f} failed`);process.exit(f?1:0);
