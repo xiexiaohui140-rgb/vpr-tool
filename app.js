@@ -19,8 +19,12 @@ $('go').onclick=()=>{const d=read();
  if(!(d.weight>0)){alert('请先填写体重');return;}
  const o=evaluate(d);last={d,o};
  const z=$('zone');z.className='zone '+(o.zone||'none');
- const sub={red:'灌注不达标',yellow:o.middleBand?'灌注达标 · FO 5%～<10%（中间带）':'灌注达标 · 液体超负荷',green:'灌注达标 · 容量稳定'};
- $('zt').textContent=o.zone?ZONE_CN[o.zone]+(o.ufOverride?' · PROTECT 覆盖':''):'无法分区';$('zs').textContent=o.zone?sub[o.zone]:'请填写 FO% 或累计入出量';
+ let yelSub='灌注达标 · 液体超负荷';
+ if(o.middleBand) yelSub='灌注达标 · FO 5%～<10%（REMOVE）';
+ else if(o.fo!=null&&o.fo>=RULES.FO_HIGH) yelSub='灌注达标 · FO≥10%（REMOVE-H）';
+ else if(o.fbPosRising) yelSub='灌注达标 · 24h正平衡上升（REMOVE）';
+ const sub={red:'灌注不达标',yellow:yelSub,green:'灌注达标 · 容量稳定'};
+ $('zt').textContent=o.zone?ZONE_CN[o.zone]+(o.krp?' · '+o.krp:'')+(o.ufOverride?' · PROTECT 覆盖':''):'无法分区';$('zs').textContent=o.zone?sub[o.zone]:'请填写 FO% 或累计入出量';
  if(o.zone==='red'){$('ufbig').textContent='净超滤 0 mL/h';$('ufsub').textContent='先暂停脱水；保留置换液、透析液处方';}
  else if(o.ufOverride){$('ufbig').textContent='立即下调或暂停净超滤';$('ufsub').innerHTML=`<b>PROTECT 覆盖本区方案</b><br>${o.uf.detail}；复评灌注后报告医生`;}
  else if(o.zone==='yellow'){$('ufbig').innerHTML=`起步 ${o.uf.kg} mL/kg/h<br>≈ ${o.uf.mlh} mL/h`;$('ufsub').innerHTML=`护士上限 ${o.uf.capKg} mL/kg/h ≈ ${o.uf.capMlh} mL/h（${d.weight} kg，${d.wtype}）<br>每次上调 ${RULES.UF_STEP}，目标 24 h 负平衡；超上限须医生评估`;}
