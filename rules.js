@@ -6,14 +6,14 @@
  * ===================================================================== */
 (function (root) {
   const RULES = {
-    version: 'v1.1',
-    date: '2026-11-03',
+    version: 'v1.2',
+    date: '2026-11-04',
 
     // ---- 阈值（文档原值）----
     MAP_MIN: 65,            // mmHg，MAP<65 → 红区
     CRT_MAX: 3,             // s，CRT>3 且持续延长 → 红区
     FO_LOW: 5,              // %，FO<5 绿区条件；FO 5 为早期预警阈值
-    FO_HIGH: 10,            // %，FO≥10 黄区 / 高液体负荷
+    FO_HIGH: 10,            // %，FO≥10 黄区·REMOVE-H / 高液体负荷（黄区同时含中间带 FO 5～<10）
     // 黄区净超滤（mL/kg/h）
     UF_START_MIN: 0.5, UF_START_MAX: 1.0, UF_NURSE_MAX: 1.75,
     UF_STEP: '20～30 mL/h',
@@ -28,8 +28,9 @@
     // ---- PENDING：科室建议标准，待审定 ----
     PENDING: {
       foFormula: 'FO% =（累计入量 − 累计出量）mL ÷（体重 kg × 1000）× 100%（Goldstein 公式，自入 ICU 起累计）',
-      middleBand: 'FO 5%～<10% 不论平衡趋势均归黄区，从低端 0.5 mL/kg/h 起步',
-      krp: 'FO<5% → KEEP（若 24 h 正平衡且上升 → REMOVE）；FO 5～<10% → REMOVE；FO≥10% → REMOVE-H',
+      // middleBand / krp 黄区覆盖范围：用户确认 2026-11-04（Asia/Shanghai）
+      middleBand: '【用户确认 2026-11-04】黄区同时覆盖 FO 5%～<10%（REMOVE，低端 0.5 mL/kg/h 起步）与 FO≥10%（REMOVE-H，0.5～1.0 mL/kg/h）；另含灌注达标且 24 h 正平衡上升',
+      krp: '【用户确认 2026-11-04】灌注达标时：FO<5% → KEEP（若 24 h 正平衡且上升 → REMOVE，进黄区）；FO 5～<10% → REMOVE（黄区）；FO≥10% → REMOVE-H（黄区）',
       intolerance: '疑似/明确不耐受判定细则（见帮助清单），于启动或上调 UF 约 1 h 内评估'
     },
     // UF 不耐受辅助清单（PENDING）

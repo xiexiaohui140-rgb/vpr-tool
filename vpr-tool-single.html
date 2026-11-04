@@ -61,7 +61,8 @@ footer{font-size:12px;color:#4a5568;text-align:center;padding:10px 16px 30px;lin
 <p class="hint">FO% =（累计入量 − 累计出量）÷（体重 kg × 1000）× 100%，自入 ICU 起累计。</p></details>
 <div class="calc" id="foCalc"></div>
 <div class="row"><label>24 h FB</label><input id="fb" type="number" inputmode="numeric" placeholder="正/负"><span class="u">mL</span></div>
-<div class="row"><label>趋势</label><div class="seg" data-k="fbTrend"><button data-v="down">↓</button><button data-v="flat" class="on">→</button><button data-v="up">↑</button></div></div></div>
+<div class="row"><label>趋势</label><div class="seg" data-k="fbTrend"><button data-v="down">↓</button><button data-v="flat" class="on">→</button><button data-v="up">↑</button></div></div>
+<p class="hint">黄区判定（用户确认 2026-11-04）：灌注达标且 FO 5%～&lt;10%（REMOVE）或 FO≥10%（REMOVE-H），或 24 h 正平衡上升。</p></div>
 
 <div class="card"><h2><span class="n">3</span>清除 R / UF</h2>
 <div class="row"><label>实际UF</label><input id="ufActual" type="number" inputmode="numeric"><span class="u">mL/h</span></div>
@@ -94,14 +95,14 @@ footer{font-size:12px;color:#4a5568;text-align:center;padding:10px 16px 30px;lin
  * ===================================================================== */
 (function (root) {
   const RULES = {
-    version: 'v1.1',
-    date: '2026-11-03',
+    version: 'v1.2',
+    date: '2026-11-04',
 
     // ---- 阈值（文档原值）----
     MAP_MIN: 65,            // mmHg，MAP<65 → 红区
     CRT_MAX: 3,             // s，CRT>3 且持续延长 → 红区
     FO_LOW: 5,              // %，FO<5 绿区条件；FO 5 为早期预警阈值
-    FO_HIGH: 10,            // %，FO≥10 黄区 / 高液体负荷
+    FO_HIGH: 10,            // %，FO≥10 黄区·REMOVE-H / 高液体负荷（黄区同时含中间带 FO 5～<10）
     // 黄区净超滤（mL/kg/h）
     UF_START_MIN: 0.5, UF_START_MAX: 1.0, UF_NURSE_MAX: 1.75,
     UF_STEP: '20～30 mL/h',
@@ -116,8 +117,9 @@ footer{font-size:12px;color:#4a5568;text-align:center;padding:10px 16px 30px;lin
     // ---- PENDING：科室建议标准，待审定 ----
     PENDING: {
       foFormula: 'FO% =（累计入量 − 累计出量）mL ÷（体重 kg × 1000）× 100%（Goldstein 公式，自入 ICU 起累计）',
-      middleBand: 'FO 5%～<10% 不论平衡趋势均归黄区，从低端 0.5 mL/kg/h 起步',
-      krp: 'FO<5% → KEEP（若 24 h 正平衡且上升 → REMOVE）；FO 5～<10% → REMOVE；FO≥10% → REMOVE-H',
+      // middleBand / krp 黄区覆盖范围：用户确认 2026-11-04（Asia/Shanghai）
+      middleBand: '【用户确认 2026-11-04】黄区同时覆盖 FO 5%～<10%（REMOVE，低端 0.5 mL/kg/h 起步）与 FO≥10%（REMOVE-H，0.5～1.0 mL/kg/h）；另含灌注达标且 24 h 正平衡上升',
+      krp: '【用户确认 2026-11-04】灌注达标时：FO<5% → KEEP（若 24 h 正平衡且上升 → REMOVE，进黄区）；FO 5～<10% → REMOVE（黄区）；FO≥10% → REMOVE-H（黄区）',
       intolerance: '疑似/明确不耐受判定细则（见帮助清单），于启动或上调 UF 约 1 h 内评估'
     },
     // UF 不耐受辅助清单（PENDING）
@@ -287,8 +289,12 @@ $('go').onclick=()=>{const d=read();
  if(!(d.weight>0)){alert('请先填写体重');return;}
  const o=evaluate(d);last={d,o};
  const z=$('zone');z.className='zone '+(o.zone||'none');
- const sub={red:'灌注不达标',yellow:o.middleBand?'灌注达标 · FO 5%～<10%（中间带）':'灌注达标 · 液体超负荷',green:'灌注达标 · 容量稳定'};
- $('zt').textContent=o.zone?ZONE_CN[o.zone]+(o.ufOverride?' · PROTECT 覆盖':''):'无法分区';$('zs').textContent=o.zone?sub[o.zone]:'请填写 FO% 或累计入出量';
+ let yelSub='灌注达标 · 液体超负荷';
+ if(o.middleBand) yelSub='灌注达标 · FO 5%～<10%（REMOVE）';
+ else if(o.fo!=null&&o.fo>=RULES.FO_HIGH) yelSub='灌注达标 · FO≥10%（REMOVE-H）';
+ else if(o.fbPosRising) yelSub='灌注达标 · 24h正平衡上升（REMOVE）';
+ const sub={red:'灌注不达标',yellow:yelSub,green:'灌注达标 · 容量稳定'};
+ $('zt').textContent=o.zone?ZONE_CN[o.zone]+(o.krp?' · '+o.krp:'')+(o.ufOverride?' · PROTECT 覆盖':''):'无法分区';$('zs').textContent=o.zone?sub[o.zone]:'请填写 FO% 或累计入出量';
  if(o.zone==='red'){$('ufbig').textContent='净超滤 0 mL/h';$('ufsub').textContent='先暂停脱水；保留置换液、透析液处方';}
  else if(o.ufOverride){$('ufbig').textContent='立即下调或暂停净超滤';$('ufsub').innerHTML=`<b>PROTECT 覆盖本区方案</b><br>${o.uf.detail}；复评灌注后报告医生`;}
  else if(o.zone==='yellow'){$('ufbig').innerHTML=`起步 ${o.uf.kg} mL/kg/h<br>≈ ${o.uf.mlh} mL/h`;$('ufsub').innerHTML=`护士上限 ${o.uf.capKg} mL/kg/h ≈ ${o.uf.capMlh} mL/h（${d.weight} kg，${d.wtype}）<br>每次上调 ${RULES.UF_STEP}，目标 24 h 负平衡；超上限须医生评估`;}

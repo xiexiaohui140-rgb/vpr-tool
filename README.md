@@ -5,7 +5,7 @@
 ## 文件
 - `index.html` `app.js`：界面
 - `rules.js`：**全部临床规则与阈值（科室修改只改这里）**，PENDING 项=科室建议标准，待审定
-- `manifest.json` `sw.js` `icons/`：PWA / 离线缓存（修改规则后请把 sw.js 里的 `C='vpr-v1.0'` 改版本号，手机才会更新）
+- `manifest.json` `sw.js` `icons/`：PWA / 离线缓存（修改规则后请把 sw.js 里的 `C='vpr-v1.2'` 改版本号，手机才会更新）
 - `vpr-tool-single.html`：单文件版（`python3 build_single.py` 重新生成），可微信/U盘发送后直接打开
 - `tests/test.js`：`node tests/test.js`
 - `make_qr.py`：`python3 make_qr.py https://xxx.github.io/vpr-qr-tool/ [床号]` 生成带标题、可打印的二维码；带床号时会自动加上 `?bed=`

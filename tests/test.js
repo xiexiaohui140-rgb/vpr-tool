@@ -32,4 +32,9 @@ let s1=V.sbar({...ok,bed:'11',ufActual:110,fb:500},E({...ok,weight:70,fo:11,tole
 s1=V.sbar({...ok,ufActual:110,ufAdjusted:40},E({...ok,weight:70,fo:11,tolerance:'疑似不耐受'}));t('v1.1 SBAR 填已调整 → 已调整为 40',s1.includes('已调整为 40 mL/h')&&!s1.includes('已提示'));
 o=E({...ok,weight:70,fo:11,map:60,tolerance:'明确不耐受'});s1=V.sbar({...ok,map:60},o);t('v1.1 红区+不耐受 → 仍 0 mL/h，SBAR 无上调',o.zone==='red'&&o.uf.mlh==='0'&&!o.ufOverride&&!s1.includes('上调')&&o.reports.includes('超滤明确不耐受'));
 o=E({...ok,weight:70,fo:11});t('v1.1 黄区耐受 → 不覆盖，仍上调方案',!o.ufOverride&&o.uf.mlh==='35～70');
+
+o=E({...ok,weight:60,fo:7,fb:0,fbTrend:'flat'});t('v1.2 FO=7 → yellow + REMOVE',o.zone==='yellow'&&o.krp==='REMOVE'&&o.middleBand);
+o=E({...ok,weight:70,fo:10,fb:0,fbTrend:'flat'});t('v1.2 FO=10 → yellow + REMOVE-H',o.zone==='yellow'&&o.krp==='REMOVE-H'&&!o.middleBand);
+o=E({...ok,weight:60,fo:4,fb:-100,fbTrend:'flat'});t('v1.2 FO=4 → green + KEEP（非正平衡上升）',o.zone==='green'&&o.krp==='KEEP');
+t('v1.2 RULES.version',V.RULES.version==='v1.2');
 console.log(`\n${p} passed, ${f} failed`);process.exit(f?1:0);
