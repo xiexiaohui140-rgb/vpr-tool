@@ -9,13 +9,18 @@ const mk=(arr,el)=>{$(el).innerHTML=arr.map(([k,t])=>`<label class="chk"><input 
 mk(RULES.INTOL_SUSPECT,'ls');mk(RULES.INTOL_CLEAR,'lc');
 document.querySelectorAll('[data-i]').forEach(c=>c.addEventListener('change',()=>{const ch={};document.querySelectorAll('[data-i]').forEach(x=>ch[x.dataset.i]=x.checked);const s=suggestTolerance(ch);$('tolSug').textContent='建议：'+s;setSeg('tolerance',s);}));
 const bed=new URLSearchParams(location.search).get('bed');if(bed)$('bed').value=bed;
-const num=id=>{const v=$(id).value.trim();return v===''?'':Number(v);};
+const num=id=>{const v=$(id).value.trim();return v===''?'':Math.round(Number(v)*100)/100;};
+// v1.3.1：输入归一化——值无论以何种路径进入输入框（如外部填入时经单精度
+// 浮点展开成 1.2000000476837158），都按 2 位小数归一，床旁不再显示长串小数。
+function normNum(v){const n=Number(v);return isNaN(n)?'':String(Math.round(n*100)/100);}
+function sanitizeInputs(){document.querySelectorAll('input[type=number]').forEach(el=>{const v=el.value.trim();if(v!==''&&!isNaN(Number(v)))el.value=normNum(v);});}
 function read(){return{bed:$('bed').value.trim(),weight:num('weight'),wtype:S.wtype,map:num('map'),crt:num('crt'),crtWorse:$('crtWorse').checked,ne:S.ne,lac:num('lac'),lac2h:num('lac2h'),lacTrend:S.lacTrend,fo:num('fo'),intake:num('intake'),output:num('output'),fb:num('fb'),fbTrend:S.fbTrend,ufActual:num('ufActual'),ufRx:num('ufRx'),ufAdjusted:num('ufAdjusted'),downtime:num('downtime'),tolerance:S.tolerance,nurseConcern:$('nurseConcern').checked};}
 function live(){const d=read();$('err').style.display='none';document.querySelectorAll('input.err').forEach(i=>i.classList.remove('err'));const f=(d.intake!==''&&d.output!=='')?computeFO(d.intake,d.output,d.weight):null;$('foCalc').textContent=f!=null?`自动计算 FO = ${f}%${d.fo===''?'（将采用）':'（已直接填写，以填写值为准）'}`:'';
  $('lacCalc').textContent=(d.lac!==''&&d.lac2h>0)?`2 h 降幅 ${Math.round((d.lac2h-d.lac)/d.lac2h*1000)/10}%`:'';}
 document.querySelectorAll('input').forEach(i=>i.addEventListener('input',live));
+document.querySelectorAll('input[type=number]').forEach(el=>el.addEventListener('change',()=>{const v=el.value.trim();if(v!==''&&!isNaN(Number(v)))el.value=normNum(v);}));
 let last=null;
-$('go').onclick=()=>{const d=read();
+$('go').onclick=()=>{sanitizeInputs();const d=read();
  const miss=validateRequired(d);
  document.querySelectorAll('input.err').forEach(i=>i.classList.remove('err'));
  if(miss.length){const e=$('err');e.textContent='请先填写：'+miss.map(m=>m[1]).join('、');e.style.display='block';miss.forEach(m=>{const el=$(m[0]);if(el)el.classList.add('err');});const first=$(miss[0][0]);if(first)first.scrollIntoView({behavior:'smooth',block:'center'});return;}
