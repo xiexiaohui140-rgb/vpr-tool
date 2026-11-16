@@ -34,47 +34,50 @@ details{margin-top:6px;font-size:14px}summary{color:var(--navy2);font-weight:600
 .rep{background:var(--redl);border-left:5px solid var(--red);padding:8px 10px;border-radius:6px;margin:6px 0;font-weight:600;color:#742a2a}
 .warn{background:var(--yell);border-left:5px solid var(--yel);padding:8px 10px;border-radius:6px;margin:6px 0;color:#744210}
 ul{margin:4px 0;padding-left:20px}li{margin:3px 0}
+.errbox{background:#fff0f0;border:2px solid var(--red);color:#742a2a;border-radius:10px;padding:10px 12px;font-weight:700;margin-bottom:12px}
+input.err{border:2px solid var(--red)!important}
 textarea{width:100%;min-height:300px;font-size:15px;padding:10px;border:1px solid var(--line);border-radius:8px;font-family:inherit}
 footer{font-size:12px;color:#4a5568;text-align:center;padding:10px 16px 30px;line-height:1.6}
 </style></head><body>
 <header><h1>V-P-R床旁快速评估</h1><p>22区ICU、SICU · SA-AKI + CRRT 容量管理</p></header>
 <main>
 <div class="card"><div class="row"><label>床号</label><input id="bed" type="text" placeholder="可选"></div>
-<div class="row"><label>体重</label><input id="weight" type="number" inputmode="decimal" placeholder="kg"><span class="u">kg</span></div>
+<div class="row"><label>体重</label><input id="weight" type="number" inputmode="decimal" placeholder="kg" step="any"><span class="u">kg</span></div>
 <div class="row"><label>体重口径</label><div class="seg" data-k="wtype"><button data-v="入院体重" class="on">入院体重</button><button data-v="干体重">干体重</button></div></div></div>
 
 <div class="card"><h2><span class="n">1</span>灌注 P（先评估）</h2>
-<div class="row"><label>MAP</label><input id="map" type="number" inputmode="decimal"><span class="u">mmHg</span></div>
-<div class="row"><label>CRT</label><input id="crt" type="number" inputmode="decimal"><span class="u">s</span></div>
+<div class="row"><label>MAP</label><input id="map" type="number" inputmode="decimal" step="any"><span class="u">mmHg</span></div>
+<div class="row"><label>CRT</label><input id="crt" type="number" inputmode="decimal" step="any"><span class="u">s</span></div>
 <label class="chk"><input type="checkbox" id="crtWorse">CRT 持续延长 / 恶化</label>
 <div class="row"><label>NE</label><div class="seg" data-k="ne"><button data-v="stable" class="on">稳定</button><button data-v="up">进行性增加</button></div></div>
-<div class="row"><label>乳酸</label><input id="lac" type="number" inputmode="decimal" placeholder="当前"><span class="u">mmol/L</span></div>
-<div class="row"><label>2 h前乳酸</label><input id="lac2h" type="number" inputmode="decimal" placeholder="可选，算降幅"><span class="u">mmol/L</span></div>
+<div class="row"><label>乳酸</label><input id="lac" type="number" inputmode="decimal" placeholder="当前" step="any"><span class="u">mmol/L</span></div>
+<div class="row"><label>2 h前乳酸</label><input id="lac2h" type="number" inputmode="decimal" placeholder="可选，算降幅" step="any"><span class="u">mmol/L</span></div>
 <div class="row"><label>乳酸趋势</label><div class="seg" data-k="lacTrend"><button data-v="down" class="on">稳定/下降</button><button data-v="up">进行性升高</button></div></div>
 <div class="calc" id="lacCalc"></div></div>
 
 <div class="card"><h2><span class="n">2</span>容量 V</h2>
-<div class="row"><label>FO%</label><input id="fo" type="number" inputmode="decimal" placeholder="直接填，或下方自动算"><span class="u">%</span></div>
+<div class="row"><label>FO%</label><input id="fo" type="number" inputmode="decimal" placeholder="直接填，或下方自动算" step="any"><span class="u">%</span></div>
 <details><summary>按累计入出量自动计算 FO% <span class="pend">待审定</span></summary>
-<div class="row"><label>累计入量</label><input id="intake" type="number" inputmode="decimal"><span class="u">mL</span></div>
-<div class="row"><label>累计出量</label><input id="output" type="number" inputmode="decimal"><span class="u">mL</span></div>
+<div class="row"><label>累计入量</label><input id="intake" type="number" inputmode="decimal" step="any"><span class="u">mL</span></div>
+<div class="row"><label>累计出量</label><input id="output" type="number" inputmode="decimal" step="any"><span class="u">mL</span></div>
 <p class="hint">FO% =（累计入量 − 累计出量）÷（体重 kg × 1000）× 100%，自入 ICU 起累计。</p></details>
 <div class="calc" id="foCalc"></div>
-<div class="row"><label>24 h FB</label><input id="fb" type="number" inputmode="numeric" placeholder="正/负"><span class="u">mL</span></div>
+<div class="row"><label>24 h FB</label><input id="fb" type="number" inputmode="numeric" placeholder="正/负" step="1"><span class="u">mL</span></div>
 <div class="row"><label>趋势</label><div class="seg" data-k="fbTrend"><button data-v="down">↓</button><button data-v="flat" class="on">→</button><button data-v="up">↑</button></div></div>
 <p class="hint">黄区判定（用户确认 2026-11-04）：灌注达标且 FO 5%～&lt;10%（REMOVE）或 FO≥10%（REMOVE-H），或 24 h 正平衡上升。</p></div>
 
 <div class="card"><h2><span class="n">3</span>清除 R / UF</h2>
-<div class="row"><label>实际UF</label><input id="ufActual" type="number" inputmode="numeric"><span class="u">mL/h</span></div>
-<div class="row"><label>处方UF</label><input id="ufRx" type="number" inputmode="numeric"><span class="u">mL/h</span></div>
-<div class="row"><label>24h停机</label><input id="downtime" type="number" inputmode="decimal"><span class="u">h</span></div>
+<div class="row"><label>实际UF</label><input id="ufActual" type="number" inputmode="numeric" step="1"><span class="u">mL/h</span></div>
+<div class="row"><label>处方UF</label><input id="ufRx" type="number" inputmode="numeric" step="1"><span class="u">mL/h</span></div>
+<div class="row"><label>24h停机</label><input id="downtime" type="number" inputmode="decimal" step="any"><span class="u">h</span></div>
 <div class="row"><label>UF耐受</label><div class="seg" data-k="tolerance"><button data-v="耐受" class="on">耐受</button><button data-v="疑似不耐受">疑似</button><button data-v="明确不耐受">明确</button></div></div>
-<div class="row" id="adjRow" style="display:none"><label>已调整为</label><input id="ufAdjusted" type="number" inputmode="numeric" placeholder="可选"><span class="u">mL/h</span></div>
+<div class="row" id="adjRow" style="display:none"><label>已调整为</label><input id="ufAdjusted" type="number" inputmode="numeric" placeholder="可选" step="any"><span class="u">mL/h</span></div>
 <details><summary>不耐受辅助清单（勾选自动建议）<span class="pend">待审定</span></summary>
 <p class="hint">启动或上调 UF 后约 1 h 内评估。</p><b>疑似不耐受（任一）</b><div id="ls"></div><b>明确不耐受（任一）</b><div id="lc"></div>
 <div class="calc" id="tolSug"></div></details>
 <label class="chk" style="margin-top:10px"><input type="checkbox" id="nurseConcern">护士判断病情恶化（其他情形）</label></div>
 
+<div class="errbox" id="err" style="display:none"></div>
 <div class="btns"><button class="go" id="go">评估</button><button class="rs" id="rs">重置</button></div>
 
 <div id="result">

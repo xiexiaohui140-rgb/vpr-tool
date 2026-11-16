@@ -8,7 +8,7 @@ o=E({...ok,weight:70,fo:12,fb:300,fbTrend:'up'});t('4 FO12 → yellow REMOVE-H 3
 o=E({...ok,weight:70,fo:12,map:60});t('5 MAP<65 → red 0 mL/h + PROTECT + 报告',o.zone==='red'&&o.uf.mlh==='0'&&o.protect&&o.reports.some(r=>r.includes('红区')));
 o=E({...ok,weight:70,fo:2,crt:4,crtWorse:true});t('6 CRT>3且延长 → red',o.zone==='red');
 o=E({...ok,weight:70,fo:2,crt:4,crtWorse:false});t('7 CRT>3未延长 → 非红',o.zone==='green');
-o=E({...ok,weight:70,fo:2,ne:'up'});t('8 NE进行性增加 → red',o.zone==='red'&&o.krp==='KEEP'&&o.protect);
+o=E({...ok,weight:70,fo:2,ne:'up'});t('8 NE进行性增加 → red + HOLD',o.zone==='red'&&o.krp==='HOLD'&&o.protect);
 o=E({...ok,weight:70,fo:11,tolerance:'疑似不耐受'});t('9 疑似不耐受 → PROTECT，黄区保留，下调动作',o.zone==='yellow'&&o.protect&&o.intolAction&&!o.reports.includes('超滤明确不耐受'));
 o=E({...ok,weight:70,fo:11,tolerance:'明确不耐受'});t('10 明确不耐受 → 立即报告',o.protect&&o.reports.includes('超滤明确不耐受'));
 o=E({...ok,weight:70,fo:2,lac:4.2});t('11 乳酸≥4 → 报告',o.reports.some(r=>r.includes('≥4.0')));
@@ -36,5 +36,13 @@ o=E({...ok,weight:70,fo:11});t('v1.1 黄区耐受 → 不覆盖，仍上调方�
 o=E({...ok,weight:60,fo:7,fb:0,fbTrend:'flat'});t('v1.2 FO=7 → yellow + REMOVE',o.zone==='yellow'&&o.krp==='REMOVE'&&o.middleBand);
 o=E({...ok,weight:70,fo:10,fb:0,fbTrend:'flat'});t('v1.2 FO=10 → yellow + REMOVE-H',o.zone==='yellow'&&o.krp==='REMOVE-H'&&!o.middleBand);
 o=E({...ok,weight:60,fo:4,fb:-100,fbTrend:'flat'});t('v1.2 FO=4 → green + KEEP（非正平衡上升）',o.zone==='green'&&o.krp==='KEEP');
-t('v1.2 RULES.version',V.RULES.version==='v1.2');
+t('v1.3 RULES.version',V.RULES.version==='v1.3');
+o=E({...ok,weight:70,fo:8.6,map:60});t('v1.3 红区 FO8.6 → krp HOLD（非 REMOVE）',o.zone==='red'&&o.krp==='HOLD'&&o.uf.mlh==='0');
+o=E({...ok,weight:70,fo:12,map:60});t('v1.3 红区 FO12 → krp HOLD（非 REMOVE-H）',o.zone==='red'&&o.krp==='HOLD');
+o=E({...ok,weight:70,fo:12});t('v1.3 黄区 FO12 → 仍 REMOVE-H',o.zone==='yellow'&&o.krp==='REMOVE-H');
+t('v1.3 computeFO 空入量/空出量 → null（不再误算 0%）',V.computeFO('','',70)===null&&V.computeFO(5000,'',70)===null);
+t('v1.3 必填校验：缺 MAP/CRT/乳酸/FO 时列出 4 项',(()=>{const m=V.validateRequired({weight:70,map:'',crt:'',lac:'',fo:'',intake:'',output:''});return m.length===4&&m.some(x=>x[0]==='map')&&m.some(x=>x[0]==='crt')&&m.some(x=>x[0]==='lac')&&m.some(x=>x[0]==='fo');})());
+t('v1.3 必填校验：填齐后为空',V.validateRequired({weight:70,map:75,crt:2,lac:2.5,fo:3,intake:'',output:''}).length===0);
+t('v1.3 必填校验：FO 空但累计入出量齐全时可评估',V.validateRequired({weight:70,map:75,crt:2,lac:2.5,fo:'',intake:5000,output:3000}).length===0);
+t('v1.3 必填校验：缺体重时列出体重',V.validateRequired({weight:'',map:75,crt:2,lac:2.5,fo:3}).some(x=>x[0]==='weight'));
 console.log(`\n${p} passed, ${f} failed`);process.exit(f?1:0);

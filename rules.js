@@ -6,8 +6,8 @@
  * ===================================================================== */
 (function (root) {
   const RULES = {
-    version: 'v1.2',
-    date: '2026-11-04',
+    version: 'v1.3',
+    date: '2026-11-16',
 
     // ---- 阈值（文档原值）----
     MAP_MIN: 65,            // mmHg，MAP<65 → 红区
@@ -54,7 +54,7 @@
 
   // FO% 自动计算
   function computeFO(intake, output, weight) {
-    if (!(weight > 0) || intake == null || output == null || isNaN(intake) || isNaN(output)) return null;
+    if (!(weight > 0) || intake === '' || output === '' || intake == null || output == null || isNaN(intake) || isNaN(output)) return null;
     return Math.round(((intake - output) / (weight * 1000)) * 1000) / 10;
   }
 
@@ -64,6 +64,20 @@
     if (RULES.INTOL_CLEAR.some(([k]) => checks[k])) return '明确不耐受';
     if (RULES.INTOL_SUSPECT.some(([k]) => checks[k])) return '疑似不耐受';
     return '耐受';
+  }
+
+  // v1.3：评估前必填校验（返回缺失项 [inputId, 中文名]；空数组 = 可评估）。
+  // 分区必需：体重、MAP、CRT、乳酸；容量二选一：直接填 FO%，或累计入量+累计出量。
+  function validateRequired(d) {
+    const miss = [];
+    if (!(Number(d.weight) > 0)) miss.push(['weight', '体重']);
+    if (d.map === '' || d.map == null || isNaN(d.map)) miss.push(['map', 'MAP']);
+    if (d.crt === '' || d.crt == null || isNaN(d.crt)) miss.push(['crt', 'CRT']);
+    if (d.lac === '' || d.lac == null || isNaN(d.lac)) miss.push(['lac', '乳酸']);
+    const foOk = d.fo !== '' && d.fo != null && !isNaN(d.fo);
+    const ioOk = d.intake !== '' && d.output !== '' && d.intake != null && d.output != null && !isNaN(d.intake) && !isNaN(d.output);
+    if (!foOk && !ioOk) miss.push(['fo', 'FO%（或累计入量+累计出量）']);
+    return miss;
   }
 
   /* 主评估：灌注优先 → 容量 → 净超滤；区优先级 红>黄>绿 */
@@ -95,6 +109,9 @@
       else if (fo >= RULES.FO_LOW) out.krp = 'REMOVE';
       else out.krp = fbPosRising ? 'REMOVE' : 'KEEP';
     }
+    // v1.3：红区（灌注不达标）不论 FO 多少，KRP 一律 HOLD——暂停去负荷，
+    // 优先保护灌注。此前按 FO 分层会把红区标成 REMOVE/REMOVE-H，与“净超滤 0”矛盾。
+    if (out.zone === 'red') out.krp = 'HOLD';
     const tol = d.tolerance || '耐受';
     out.tolerance = tol;
     out.protect = !perfusionMet || tol !== '耐受';
@@ -173,6 +190,6 @@
     ].join('\n');
   }
 
-  const api = { RULES, evaluate, computeFO, suggestTolerance, sbar, ufMlh, ZONE_CN };
+  const api = { RULES, evaluate, computeFO, suggestTolerance, sbar, ufMlh, ZONE_CN, validateRequired };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.VPR = api;
 })(this);

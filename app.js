@@ -1,5 +1,5 @@
 (function(){
-const {RULES,evaluate,computeFO,suggestTolerance,sbar,ZONE_CN}=window.VPR;
+const {RULES,evaluate,computeFO,suggestTolerance,sbar,ZONE_CN,validateRequired}=window.VPR;
 const $=id=>document.getElementById(id);
 const S={wtype:'入院体重',ne:'stable',lacTrend:'down',fbTrend:'flat',tolerance:'耐受'};
 const defaults={...S};
@@ -11,19 +11,22 @@ document.querySelectorAll('[data-i]').forEach(c=>c.addEventListener('change',()=
 const bed=new URLSearchParams(location.search).get('bed');if(bed)$('bed').value=bed;
 const num=id=>{const v=$(id).value.trim();return v===''?'':Number(v);};
 function read(){return{bed:$('bed').value.trim(),weight:num('weight'),wtype:S.wtype,map:num('map'),crt:num('crt'),crtWorse:$('crtWorse').checked,ne:S.ne,lac:num('lac'),lac2h:num('lac2h'),lacTrend:S.lacTrend,fo:num('fo'),intake:num('intake'),output:num('output'),fb:num('fb'),fbTrend:S.fbTrend,ufActual:num('ufActual'),ufRx:num('ufRx'),ufAdjusted:num('ufAdjusted'),downtime:num('downtime'),tolerance:S.tolerance,nurseConcern:$('nurseConcern').checked};}
-function live(){const d=read();const f=(d.intake!==''&&d.output!=='')?computeFO(d.intake,d.output,d.weight):null;$('foCalc').textContent=f!=null?`自动计算 FO = ${f}%${d.fo===''?'（将采用）':'（已直接填写，以填写值为准）'}`:'';
+function live(){const d=read();$('err').style.display='none';document.querySelectorAll('input.err').forEach(i=>i.classList.remove('err'));const f=(d.intake!==''&&d.output!=='')?computeFO(d.intake,d.output,d.weight):null;$('foCalc').textContent=f!=null?`自动计算 FO = ${f}%${d.fo===''?'（将采用）':'（已直接填写，以填写值为准）'}`:'';
  $('lacCalc').textContent=(d.lac!==''&&d.lac2h>0)?`2 h 降幅 ${Math.round((d.lac2h-d.lac)/d.lac2h*1000)/10}%`:'';}
 document.querySelectorAll('input').forEach(i=>i.addEventListener('input',live));
 let last=null;
 $('go').onclick=()=>{const d=read();
- if(!(d.weight>0)){alert('请先填写体重');return;}
+ const miss=validateRequired(d);
+ document.querySelectorAll('input.err').forEach(i=>i.classList.remove('err'));
+ if(miss.length){const e=$('err');e.textContent='请先填写：'+miss.map(m=>m[1]).join('、');e.style.display='block';miss.forEach(m=>{const el=$(m[0]);if(el)el.classList.add('err');});const first=$(miss[0][0]);if(first)first.scrollIntoView({behavior:'smooth',block:'center'});return;}
+ $('err').style.display='none';
  const o=evaluate(d);last={d,o};
  const z=$('zone');z.className='zone '+(o.zone||'none');
  let yelSub='灌注达标 · 液体超负荷';
  if(o.middleBand) yelSub='灌注达标 · FO 5%～<10%（REMOVE）';
  else if(o.fo!=null&&o.fo>=RULES.FO_HIGH) yelSub='灌注达标 · FO≥10%（REMOVE-H）';
  else if(o.fbPosRising) yelSub='灌注达标 · 24h正平衡上升（REMOVE）';
- const sub={red:'灌注不达标',yellow:yelSub,green:'灌注达标 · 容量稳定'};
+ const sub={red:'灌注不达标 · 暂停去负荷',yellow:yelSub,green:'灌注达标 · 容量稳定'};
  $('zt').textContent=o.zone?ZONE_CN[o.zone]+(o.krp?' · '+o.krp:'')+(o.ufOverride?' · PROTECT 覆盖':''):'无法分区';$('zs').textContent=o.zone?sub[o.zone]:'请填写 FO% 或累计入出量';
  if(o.zone==='red'){$('ufbig').textContent='净超滤 0 mL/h';$('ufsub').textContent='先暂停脱水；保留置换液、透析液处方';}
  else if(o.ufOverride){$('ufbig').textContent='立即下调或暂停净超滤';$('ufsub').innerHTML=`<b>PROTECT 覆盖本区方案</b><br>${o.uf.detail}；复评灌注后报告医生`;}
@@ -31,7 +34,7 @@ $('go').onclick=()=>{const d=read();
  else if(o.zone==='green'){$('ufbig').textContent='净超滤维持不变';$('ufsub').textContent='不加不减；病情变化时重新分区';}
  else{$('ufbig').textContent='';$('ufsub').textContent='';}
  $('krp').textContent=o.krp||'—';
- $('krpd').textContent={KEEP:'低容量负荷：维持/观察',REMOVE:'中度容量负荷：主动去负荷','REMOVE-H':'高容量负荷：强化评估与协作，≠强制高速 UF'}[o.krp]||'';
+ $('krpd').textContent={KEEP:'低容量负荷：维持/观察',REMOVE:'中度容量负荷：主动去负荷','REMOVE-H':'高容量负荷：强化评估与协作，≠强制高速 UF',HOLD:'灌注未达标：暂停去负荷，优先保护灌注'}[o.krp]||'';
  $('protect').style.display=o.protect?'block':'none';
  $('reps').innerHTML=(o.reports.map(r=>`<div class="rep">立即报告：${r}</div>`).join('')+o.warnings.map(r=>`<div class="warn">${r}</div>`).join(''))||'<div class="hint">暂无立即报告情形</div>';
  const a=[];
