@@ -36,7 +36,7 @@ o=E({...ok,weight:70,fo:11});t('v1.1 黄区耐受 → 不覆盖，仍上调方�
 o=E({...ok,weight:60,fo:7,fb:0,fbTrend:'flat'});t('v1.2 FO=7 → yellow + REMOVE',o.zone==='yellow'&&o.krp==='REMOVE'&&o.middleBand);
 o=E({...ok,weight:70,fo:10,fb:0,fbTrend:'flat'});t('v1.2 FO=10 → yellow + REMOVE-H',o.zone==='yellow'&&o.krp==='REMOVE-H'&&!o.middleBand);
 o=E({...ok,weight:60,fo:4,fb:-100,fbTrend:'flat'});t('v1.2 FO=4 → green + KEEP（非正平衡上升）',o.zone==='green'&&o.krp==='KEEP');
-t('v1.3.1 RULES.version',V.RULES.version==='v1.3.1');
+t('v1.3.2 RULES.version',V.RULES.version==='v1.3.2');
 o=E({...ok,weight:70,fo:8.6,map:60});t('v1.3 红区 FO8.6 → krp HOLD（非 REMOVE）',o.zone==='red'&&o.krp==='HOLD'&&o.uf.mlh==='0');
 o=E({...ok,weight:70,fo:12,map:60});t('v1.3 红区 FO12 → krp HOLD（非 REMOVE-H）',o.zone==='red'&&o.krp==='HOLD');
 o=E({...ok,weight:70,fo:12});t('v1.3 黄区 FO12 → 仍 REMOVE-H',o.zone==='yellow'&&o.krp==='REMOVE-H');

@@ -19,6 +19,17 @@ function live(){const d=read();$('err').style.display='none';document.querySelec
  $('lacCalc').textContent=(d.lac!==''&&d.lac2h>0)?`2 h 降幅 ${Math.round((d.lac2h-d.lac)/d.lac2h*1000)/10}%`:'';}
 document.querySelectorAll('input').forEach(i=>i.addEventListener('input',live));
 document.querySelectorAll('input[type=number]').forEach(el=>el.addEventListener('change',()=>{const v=el.value.trim();if(v!==''&&!isNaN(Number(v)))el.value=normNum(v);}));
+// v1.3.2（本地待发布）：补三处归一化缺口——粘贴、失焦、页面加载。
+// 注意：不能在 input 事件上无条件归一——输入 "70.05" 时中间态 "70.0" 会被改写成 "70"，
+// 再输 5 就变成 705；所以 input 上只处理粘贴进来的完整值（paste 后紧跟的那次 input），
+// 正在敲的数字不动，只靠失焦/评估/读取三层兜底。
+let pasted=false;
+document.querySelectorAll('input[type=number]').forEach(el=>{
+  el.addEventListener('paste',()=>{pasted=true;});
+  el.addEventListener('input',()=>{if(!pasted)return;pasted=false;const v=el.value.trim();if(v!==''&&!isNaN(Number(v)))el.value=normNum(v);});
+  el.addEventListener('focusout',()=>{sanitizeInputs();});
+});
+sanitizeInputs(); // 页面加载时：浏览器自动填充/恢复的值不触发任何事件
 let last=null;
 $('go').onclick=()=>{sanitizeInputs();const d=read();
  const miss=validateRequired(d);
